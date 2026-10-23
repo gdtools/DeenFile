@@ -60,5 +60,4 @@ gcc -O2 -s -municode -o deenfile.exe deenfile.c
 ## 文件
 
 - `deenfile.c` — 全部源码（单文件，无第三方依赖）
-- `deenfile开发文档.md` — 详细设计文档
 - `mkdata.py` / `verify.py` — 测试数据生成与校验脚本

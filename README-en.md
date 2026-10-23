@@ -63,6 +63,5 @@ gcc -O2 -s -municode -o deenfile.exe deenfile.c
 ## Files
 
 - `deenfile.c` — all source code (single file, no third-party dependencies)
-- `deenfile开发文档.md` — detailed design doc (Chinese)
 - `mkdata.py` / `verify.py` — test data generation and verification scripts
 - `.github/workflows/release.yml` — GitHub Actions: auto build, package, and publish Releases

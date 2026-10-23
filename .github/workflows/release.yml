@@ -44,16 +44,16 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          $pkg = "deenfile-$env:TAG_NAME.zip"
-          Compress-Archive -Path deenfile.exe, deenfile.c, README.md, README-en.md, "deenfile开发文档.md" -DestinationPath $pkg -Force
-          Get-Item $pkg | Select-Object Name, Length
+          $exe = "deenfile_$env:TAG_NAME.exe"
+          Copy-Item deenfile.exe $exe
+          Get-Item $exe | Select-Object Name, Length
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
           name: deenfile ${{ env.TAG_NAME }}
-          files: deenfile-${{ env.TAG_NAME }}.zip
+          files: deenfile_${{ env.TAG_NAME }}.exe
           generate_release_notes: true
           body: |
             ## 用法速查
