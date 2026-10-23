@@ -27,33 +27,38 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: mingw-w64-x86_64-gcc
+          install: mingw-w64-x86_64-gcc mingw-w64-i686-gcc
 
       - name: Build
         shell: msys2 {0}
         run: |
-          gcc -O2 -s -municode -Wall -o deenfile.exe deenfile.c
-          ls -l deenfile.exe
+          gcc -O2 -s -municode -Wall -o deenfile_x64.exe deenfile.c
+          /mingw32/bin/gcc -O2 -s -municode -Wall -o deenfile_x86.exe deenfile.c
+          ls -l deenfile_x64.exe deenfile_x86.exe
 
       - name: Smoke test
         shell: msys2 {0}
         run: |
-          ./deenfile.exe level
-          ./deenfile.exe badcmd
+          ./deenfile_x64.exe level
+          ./deenfile_x64.exe badcmd
+          ./deenfile_x86.exe level
+          ./deenfile_x86.exe badcmd
 
       - name: Package
         shell: pwsh
         run: |
-          $exe = "deenfile_$env:TAG_NAME.exe"
-          Copy-Item deenfile.exe $exe
-          Get-Item $exe | Select-Object Name, Length
+          Copy-Item deenfile_x64.exe "deenfile_${env:TAG_NAME}_x64.exe"
+          Copy-Item deenfile_x86.exe "deenfile_${env:TAG_NAME}_x86.exe"
+          Get-ChildItem "deenfile_${env:TAG_NAME}_*.exe" | Select-Object Name, Length
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
           name: deenfile ${{ env.TAG_NAME }}
-          files: deenfile_${{ env.TAG_NAME }}.exe
+          files: |
+            deenfile_${{ env.TAG_NAME }}_x64.exe
+            deenfile_${{ env.TAG_NAME }}_x86.exe
           generate_release_notes: true
           body: |
             ## 用法速查
@@ -70,3 +75,4 @@ jobs:
 
             等级 1 = 目录隐藏 + 文件名偏移，不碰文件内容（快）；等级 2 = 额外混淆文件头（慢）。
             修改密码 / 等级前会自动全量解密，失败则整体放弃，不会留半成品。
+            提供 `_x64` 与 `_x86`（32 位）两个版本，Windows 7 及以上可直接运行，无需安装第三方运行库。
