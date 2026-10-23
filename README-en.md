@@ -8,7 +8,6 @@
 
 - Extremely fast
 - CLI support
-- Runs on Windows 7/8/10/11 (x64 and x86), no third-party runtime required
 - Trades crack-resistance for encode (hide) / decode (show) speed
 - Priority: lossless restore > speed > crackability
 
@@ -58,11 +57,7 @@ Interactive menu: `1 encode` / `2 decode` / `3 add` / `4 list` / `5 pwd` / `6 le
 ## Build
 
 ```bash
-# 64-bit (MSYS2: pacman -S mingw-w64-x86_64-gcc)
 gcc -O2 -s -municode -o deenfile.exe deenfile.c
-
-# 32-bit (MSYS2: pacman -S mingw-w64-i686-gcc)
-/mingw32/bin/gcc -O2 -s -municode -o deenfile.exe deenfile.c
 ```
 
 ## Files

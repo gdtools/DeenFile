@@ -9,7 +9,6 @@
 
 - 速度极快
 - 支持cli
-- 支持 Windows 7/8/10/11，x64 与 x86（32位），无需第三方运行库
 - 牺牲破解难度提高加密（隐藏）解密（显示）速度
 - 功能优先级：无损还原 > 速度 > 可破解
 
@@ -59,11 +58,7 @@ Windows 目录遮挡工具：把目录藏起来（改名 + CLSID 后缀 + 隐藏
 ## 编译
 
 ```bash
-# 64 位（MSYS2：pacman -S mingw-w64-x86_64-gcc）
 gcc -O2 -s -municode -o deenfile.exe deenfile.c
-
-# 32 位（MSYS2：pacman -S mingw-w64-i686-gcc）
-/mingw32/bin/gcc -O2 -s -municode -o deenfile.exe deenfile.c
 ```
 
 ## 文件
