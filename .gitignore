@@ -1,0 +1,12 @@
+# 构建产物
+deenfile.exe
+*.o
+*.obj
+
+# 测试数据与旧版残留
+test_path.*
+test_file.txt
+*.bak
+
+# 本地环境（记忆/清理清单/回收目录）
+.workbuddy/

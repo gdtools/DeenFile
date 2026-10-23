@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag，例如 v1.0.0'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      TAG_NAME: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSYS2 (MinGW-w64 GCC)
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: mingw-w64-x86_64-gcc
+
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          gcc -O2 -s -municode -Wall -o deenfile.exe deenfile.c
+          ls -l deenfile.exe
+
+      - name: Smoke test
+        shell: msys2 {0}
+        run: |
+          ./deenfile.exe level
+          ./deenfile.exe badcmd
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $pkg = "deenfile-$env:TAG_NAME.zip"
+          Compress-Archive -Path deenfile.exe, deenfile.c, README.md, README-en.md, "deenfile开发文档.md" -DestinationPath $pkg -Force
+          Get-Item $pkg | Select-Object Name, Length
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: deenfile ${{ env.TAG_NAME }}
+          files: deenfile-${{ env.TAG_NAME }}.zip
+          generate_release_notes: true
+          body: |
+            ## 用法速查
+
+            | 命令 | 需要密码 | 说明 |
+            |---|---|---|
+            | `deenfile` | 否 | 交互界面 |
+            | `deenfile add <dir>` | 是 | 登记目录 |
+            | `deenfile encode` | 否 | 加密全部登记目录 |
+            | `deenfile decode [force]` | 是 | 解密全部登记目录 |
+            | `deenfile pwd` | 是 | 修改密码 |
+            | `deenfile level [1\|2]` | 查询否 / 修改是 | 安全等级（缺省 1） |
+            | `deenfile list` | 是 | 查看已登记目录 |
+
+            等级 1 = 目录隐藏 + 文件名偏移，不碰文件内容（快）；等级 2 = 额外混淆文件头（慢）。
+            修改密码 / 等级前会自动全量解密，失败则整体放弃，不会留半成品。
